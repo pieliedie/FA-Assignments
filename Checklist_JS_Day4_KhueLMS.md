@@ -8,7 +8,9 @@ Code bất đồng bộ không chờ cho hàm được trả về mà vẫn ti�
 Javascript là ngôn ngữ bất đồng bộ
 ### 1.2 setTimeout
 #### * Định nghĩa hàm setTimeout <br>
-Hàm setTimeout gọi một hàm hoặc tính tóan giá trị biểu thức sau một thời gian chờ tính theo milisecond
+- Hàm setTimeout gọi một hàm hoặc tính tóan giá trị biểu thức sau một thời gian chờ tính theo milisecond <br>
+- setTimeout không phải là hàm có sẵn trong V8 core, nó được cung cấp bởi browser <br>
+- setTimeout  vói n milisecond chỉ bảo đảm thời gian chờ thối thiểu là n, chứ không bảo đảm hàm sẽ được thực thi sau n milisecond, thời gian chờ có thể lâu hơn
 #### * Set đoạn code sau, hãy mô tả chính xác những gì xảy ra và kết quả in ra là gì ? <br>
 ```
 console.log('Hi');
@@ -17,8 +19,9 @@ setTimeout(function () {
   console.log('there');
 }, 1000);
 ```
-- Chương trình thực thi hàm console.log và in ra string "Hi" <br>
-- Thực thi hàm setTimeout, truyền vào 1 hàm vô danh, hàm này sẽ in ra string 'there', tham số thứ hai là thời gian chờ 1s. <br>
+- Hàm console.log('Hi') được đưa vào call stack, chương trình thực thi hàm console.log và in ra string "Hi", hàm pop ra khỏi stack <br>
+- setTimeout đưa vào call stack, chuyển qua cho browser xứ lý, chờ 1s, sau thời gian chờ đẩy function console.log('there'); vào callback queue.
+- Khi call stack trống, event loop đẩy callback function vào stack, thực thi hàm console.log('there'),in ra string 'there',  <br>
 - Kết quả in ra là 'Hi', 1 giây sau in ra 'there'
 ```
 console.log('Hi');
@@ -28,11 +31,15 @@ setTimeout(function () {
 }, 0);
 console.log('Hi again');
 ```
-- Thực thi hàm console.log in ra chuỗi 'Hi' <br>
-- Thực thi hàm setTimeout nhưng lưu lại trong bộ nhớ để thực thi sau, chưa in ra string 'there'
-- Thực thi hàm console.log in ra chuỗi 'Hi again' <br>
-- In ra chuỗi 'there'
+- Hàm console.log('Hi') được đưa vào call stack, chương trình thực thi hàm console.log và in ra string "Hi", hàm pop ra khỏi stack <br>
+- setTimeout đưa vào call stack, chuyển qua cho browser, browser gọi hàm setTimeout, function console.log('there')được đưa vào vào callback queue ngay vì thời gian chờ bằng 0s
+- Cùng lúc này, hàm console.log('Hi again') được đưa vào call stack, chương trình thực thi hàm console.log và in ra string "Hi again", hàm pop ra khỏi stack <br>
+- Khi call stack trống, event loop đẩy callback function vào stack, thực thi hàm console.log('there'),in ra string 'there',<br>
+- Kết quả in ra là 'Hi', 'Hi again' và 'there'
 #### * Từ ví dụ trên em có nhận xét gì? <br>
+- Call stack là dạng câu trúc dữ liệu thể hiện lượt mà func được thực thi
+- setTimeout và 1 số hàm khác không nằm trong V8 mà được cung cấp bởi browser, vì thế khi gọi sec do broswer xử lý, vì thế cho nên các callback func của các hàm này sau khi được xử lý xong sẽ chò ở callback queue, khi call stack trống sẽ được đẩy vào để thực thi theo thứ tự First In First Out
+
 ### 1.3 Event Loop
 ### 1.4 Callbacks
 #### * Người ta nói callback functions đóng gói tính liên tục của chương trình. Theo em chương trình dưới sẽ được chạy liên tục ra sao? Ví dụ (1) => (2) => (3) 
@@ -56,4 +63,4 @@ btn.addEventListener('click', function () {
   // (3)
 });
 ```
-#### * Theo eo những điểu bất lợi của callbacks là gì ? liên quan đến: code readability, code security, handle errors code, code reusability
+#### * Theo em những điểu bất lợi của callbacks là gì ? liên quan đến: code readability, code security, handle errors code, code reusability
