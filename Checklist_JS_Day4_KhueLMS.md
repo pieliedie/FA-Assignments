@@ -50,6 +50,7 @@ setTimeout(function () {
 }, 1000);
 // (3)
 ```
+Thứ tự (1) => (3) => (2) <br>
 #### * Nested/Chained Callbacks
 Set đoạn code sau, khi người dùng click vào btn thì điều gì xảy ra?
 ```
@@ -63,4 +64,7 @@ btn.addEventListener('click', function () {
   // (3)
 });
 ```
+- Khi người dùng click vào button, function callback trong hàm addEventListener sẽ được gọi và đẩy vào call stack, hàm này sẽ gọi hàm setTimeout, nên hàm setTimeout cũng được đẩy vào callstack. Do settimeout không phải là hàm của V8 nên nó sẽ được đẩy sang cho Event Table. Web ÁP sẽ thực thi hàm setTimeout và bắt đều đếm thời gian chờ, Sau khi chờ hết thời gian 1s, callback func của setTimeout sẽ được đầy vào Task Queue. Khi Event Loop thấy callstack rỗng mà có hàm đang chờ ở task queue thì nó sẽ đẩy hàm vào call stack,Sau đó hàm được thực thi
 #### * Theo em những điểu bất lợi của callbacks là gì ? liên quan đến: code readability, code security, handle errors code, code reusability
+
+1.5 Promises
